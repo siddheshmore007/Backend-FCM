@@ -28,6 +28,11 @@ def payment_helper(payment_record) -> dict:
         "student_id": payment_record["student_id"],
         "full_name": payment_record["full_name"],
         "email": payment_record["email"],
+        "mobile_no": payment_record["mobile_no"],
+        "batch": payment_record["batch"],
+        "reference_id": payment_record["reference_id"],
+        "email_sent": payment_record["email_sent"],
+        "payment_status": payment_record["payment_status"],
     }
 
 
