@@ -42,3 +42,11 @@ async def add_payment_record(payment: dict) -> dict:
     payment_record = await payment_collection.insert_one(payment)
     new_payment = await payment_collection.find_one({"_id": payment_record.inserted_id})
     return payment_helper(new_payment)
+
+
+# Retrieve all the payment records  Q1w2e3r4@trading535
+async def retrieve_payment_records():
+    payment_records = []
+    async for payments in payment_collection.find():
+        payment_records.append(payment_helper(payments))
+    return payment_records

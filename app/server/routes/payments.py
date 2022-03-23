@@ -5,6 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from app.server.database import (
     
     add_payment_record,
+    retrieve_payment_records,
     
 )
 
@@ -24,3 +25,11 @@ async def add_new_payment(payment_record: PaymentRecords = Body(...)):
     new_payment_record = await add_payment_record(payment_record)
     return ResponseModel(new_payment_record, "Payment Record Added Successfully.")
 
+
+
+@router.get("/", response_description="Payment records retrieved Succeessfully")
+async def get_all_payment_records():
+    payments = await retrieve_payment_records()
+    if payments:
+        return ResponseModel(payments, "Payments data retrieved Successfully")
+    return ResponseModel(payments, "Empty list returned")
