@@ -6,6 +6,7 @@ from app.server.database import (
     
     add_payment_record,
     retrieve_payment_records,
+    retrieve_payment_by_id,
     
 )
 
@@ -31,5 +32,13 @@ async def add_new_payment(payment_record: PaymentRecords = Body(...)):
 async def get_all_payment_records():
     payments = await retrieve_payment_records()
     if payments:
-        return ResponseModel(payments, "Payments data retrieved Successfully")
+        return ResponseModel(payments, "Payment record retrieved Successfully")
     return ResponseModel(payments, "Empty list returned")
+
+
+@router.get("/{student_id}", response_description="Payment Record Retrieved")
+async def get_payment_record_by_id(student_id):
+    payment_record = await retrieve_payment_by_id(student_id)
+    if payment_record:
+        return ResponseModel(payment_record, "Payment Record Retrieved Successfully")
+    return ErrorResponseModel("An Error occurred.", 404, "Payment Record for the student does not exist.")

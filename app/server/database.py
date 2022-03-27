@@ -44,9 +44,22 @@ async def add_payment_record(payment: dict) -> dict:
     return payment_helper(new_payment)
 
 
-# Retrieve all the payment records  Q1w2e3r4@trading535
+# Retrieve all the payment records
 async def retrieve_payment_records():
     payment_records = []
     async for payments in payment_collection.find():
         payment_records.append(payment_helper(payments))
     return payment_records
+
+
+# Retrieve payment record by id
+async def retrieve_payment_by_id(student_id:str) -> dict:
+    payment_record = await payment_collection.find_one({"student_id": student_id})
+    if payment_record:
+        return payment_helper(payment_record)
+
+
+# update a record by id
+
+
+# delete a record
