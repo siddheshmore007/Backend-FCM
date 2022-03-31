@@ -7,6 +7,8 @@ from app.server.database import (
     add_payment_record,
     retrieve_payment_records,
     retrieve_payment_by_id,
+    update_payment_record_data,
+    update_payment_status,
     
 )
 
@@ -15,6 +17,7 @@ from app.server.models.payments import (
     PaymentRecords,
     ResponseModel,
     ErrorResponseModel,
+    UpdatePaymentRecords,
 )
 
 router = APIRouter()
@@ -42,3 +45,19 @@ async def get_payment_record_by_id(student_id):
     if payment_record:
         return ResponseModel(payment_record, "Payment Record Retrieved Successfully")
     return ErrorResponseModel("An Error occurred.", 404, "Payment Record for the student does not exist.")
+
+
+@router.put("/{student_id}", response_description="Update payment record")
+async def update_payment_record(student_id: str, req: UpdatePaymentRecords = Body(...)):
+    req = {k: v for k, v in req.dict().items() if v is not None}
+    updated_record = await update_payment_record_data(student_id, req)
+    if updated_record:
+        return ResponseModel(
+            "Payment with ID: {} name update is successful".format(student_id),
+            "Payment Record updated successfully",
+        )
+    return ErrorResponseModel(
+        "An error occurred",
+        404,
+        "There was an error updating the payment.",
+    )

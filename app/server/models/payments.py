@@ -31,6 +31,32 @@ class PaymentRecords(BaseModel):
         }
 
 
+class UpdatePaymentRecords(BaseModel):
+    student_id: Optional[str]
+    full_name: Optional[str]
+    email: Optional[EmailStr]
+    mobile_no: Optional[str]
+    batch: Optional[str]
+    reference_id: Optional[str]
+    email_sent: Optional[bool]  
+    payment_status: Optional[str]
+    
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "student_id": "pybk01",
+                "full_name": "Siddhesh More",
+                "email": "moresiddhesh@gmail.com",
+                "mobile_no": "1234567890",
+                "batch": "Backend With Python",
+                "reference_id": "pybk01",
+                "email_sent": False,
+                "payment_status": "Pending",
+            }
+        }
+
+
 def ResponseModel(data, message):
     return {
         "data": [data],

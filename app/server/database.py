@@ -1,7 +1,7 @@
 import motor.motor_asyncio
 
 from bson.objectid import ObjectId
-
+from decouple import config
 
 
 
@@ -11,7 +11,7 @@ from bson.objectid import ObjectId
 # Replace <password> with the password for the siddhesh007 user. Replace myFirstDatabase with the name of the database that connections will use by default. Ensure any option params are URL encoded.
 
 
-MONGO_DETAILS = "mongodb://localhost:27017"
+MONGO_DETAILS = config("MONGO_URL")
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 
@@ -59,7 +59,25 @@ async def retrieve_payment_by_id(student_id:str) -> dict:
         return payment_helper(payment_record)
 
 
-# update a record by id
 
+# update payment_status from pending to successful 
+async def update_payment_status():
+    pass
+        
+
+# update a record by id
+# Update a student with a matching ID
+async def update_payment_record_data(student_id: str, data: dict):
+    # Return false if an empty request body is sent.
+    if len(data) < 1:
+        return False
+    payment_record = await payment_collection.find_one({"student_id": student_id})
+    if payment_record:
+        updated_paymenr_record = await payment_collection.update_one(
+            {"student_id": student_id}, {"$set": data}
+        )
+        if updated_paymenr_record:
+            return True
+        return False
 
 # delete a record

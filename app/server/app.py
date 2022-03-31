@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from app.server.routes.payments import router as PaymentRouter
 from fastapi.middleware.cors import CORSMiddleware
+from app.server.routes.webhook import webhook_router as StatusRouter
+
 
 
 
@@ -24,6 +26,9 @@ app.add_middleware(
 
 
 app.include_router(PaymentRouter, tags=["Payments"], prefix="/payments")
+
+app.include_router(StatusRouter, tags=["Payment Status"], prefix="/status")
+
 
 
 @app.get("/", tags=["Root"])
