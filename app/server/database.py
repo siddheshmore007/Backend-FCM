@@ -2,23 +2,19 @@ import motor.motor_asyncio
 
 from bson.objectid import ObjectId
 from decouple import config
+import urllib.parse
+
+from pydantic import EmailStr
 
 
-
-# client = pymongo.MongoClient("mongodb+srv://siddhesh007:<password>@payments.pp5bw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", server_api=ServerApi('1'))
-# db = client.test
-# pwd=Zonex2cthreev4@trd355 
-# Replace <password> with the password for the siddhesh007 user. Replace myFirstDatabase with the name of the database that connections will use by default. Ensure any option params are URL encoded.
-
-
-MONGO_DETAILS = config("MONGO_URL")
+# MongoDB configurations
+MONGO_DETAILS = config("MONGO_URL_BEG")+urllib.parse.quote_plus(config("MONGO_PWD"))+config("MONGO_URL_END")
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 
 database = client.payments
 
 payment_collection = database.get_collection("payments_collection")
-
 
 
 # helper
@@ -60,24 +56,38 @@ async def retrieve_payment_by_id(student_id:str) -> dict:
 
 
 
-# update payment_status from pending to successful 
-async def update_payment_status():
-    pass
-        
+# update payment_status from pending to successful  Z1x2c3v4@trading786 siddhesh007
+async def update_payment_status(email: EmailStr):
+    status = {"payment_status": "PAID"}
+    payment_record = await payment_collection.find_one({"email": email})
+    if payment_record:
+        updated_payment = await payment_collection.update_one(
+            {"email": email}, {"$set": status}
+        )
+        if updated_payment:
+            return True
+        return False
+
 
 # update a record by id
 # Update a student with a matching ID
 async def update_payment_record_data(student_id: str, data: dict):
-    # Return false if an empty request body is sent.
+    
     if len(data) < 1:
         return False
     payment_record = await payment_collection.find_one({"student_id": student_id})
     if payment_record:
-        updated_paymenr_record = await payment_collection.update_one(
+        updated_payment_record = await payment_collection.update_one(
             {"student_id": student_id}, {"$set": data}
         )
-        if updated_paymenr_record:
+        if updated_payment_record:
             return True
         return False
 
+
 # delete a record
+async def delete_payment_record(student_id: str):
+    payment_record = await payment_collection.find_one({"student_id": student_id})
+    if payment_record:
+        await payment_collection.delete_one({"student_id": student_id})
+        return True

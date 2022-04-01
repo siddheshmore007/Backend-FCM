@@ -1,6 +1,7 @@
 from decouple import config
 import logging
 import json
+from pydantic import EmailStr
 import razorpay
 
 # Create and configure logger
@@ -13,7 +14,7 @@ logger = logging.getLogger()
 client = razorpay.Client(auth=(config("RZP_TEST_KEY"), config("RZP_SECRET_KEY")))
 
 
-# # Z1x2c3v4@P0o9i8u7 - sec
+
 # client.utility.verify_webhook_signature(webhook_body, webhook_signature, webhook_secret)
 
 # client.utility.verify_webhook_
@@ -51,18 +52,14 @@ async def read_webhooks(request: Request):
         json_body = json.loads(body)
         payload = json_body["payload"]
         payment_info = payload["payment_link"]
-        customer = payment_info["entity"]["customer"]
-        reference_id = payment_info["entity"]["reference_id"]
+        student = payment_info["entity"]["customer"]
+        mail = student["email"]
         link_status = payment_info["entity"]["status"]
-    
+        student_email = EmailStr(mail)
         # verify = client.utility.verify_webhook_signature(body, webhook_signature, webhook_secret)
-        print(head_values)
-
-        # logger.info("New payment captured: {}".format(customer["name"]))
-        # print(json_body["payload"])
-        print(customer)
-        print(link_status)
-        print(raw_body)
+        if link_status == "paid":
+            update = await update_payment_status(student_email)
+        
     except json.JSONDecodeError:
         print("Response Content is not a valid JSON")
     finally:
